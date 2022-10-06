@@ -1,0 +1,17 @@
+package com.rs.examples.thenewboston.datasource.mock
+
+import com.rs.examples.thenewboston.datasource.BankDataSource
+import com.rs.examples.thenewboston.model.Bank
+import org.springframework.stereotype.Repository
+
+@Repository
+class MockBankDataSource: BankDataSource {
+
+    val banks = listOf(
+        Bank("12345",3.14,17),
+        Bank("1010",17.14,0),
+        Bank("5678",0.0,100)
+    )
+
+    override fun retrieveBanks(): Collection<Bank> = banks
+}
