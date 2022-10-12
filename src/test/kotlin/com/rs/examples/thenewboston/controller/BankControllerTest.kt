@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 
 @SpringBootTest
@@ -125,7 +126,60 @@ internal class BankControllerTest @Autowired constructor(
 
         }
 
+
+    }
+
+    @Nested
+    @DisplayName("PATCH /api/banks")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    inner class PatchExistingBank {
+
+        @Test
+        fun `should update an existing bank`() {
+            //given
+            val existingBank = Bank("12345", 44.0, 2)
+
+            //when
+            val performPatch = mockMvc.patch("$baseUrl"){
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(existingBank)
+            }
+
+            //then
+            performPatch
+                .andDo { print() }
+                .andExpect {
+                    status { isOk()}
+                    content { contentType(MediaType.APPLICATION_JSON)
+                    json(objectMapper.writeValueAsString(existingBank))
+                    }
+
+                }
+            mockMvc.get("$baseUrl/${existingBank.accountNumber}")
+                .andExpect { content { json(objectMapper.writeValueAsString(existingBank)) } }
+            }
+        }
+    
+        @Test
+        fun `should return NOT FOUND if bank with given account number does not exist`() {
+            //given
+            val existingBank = Bank("123456", 44.0, 2)
+
+            //when
+            val performPatch = mockMvc.patch("$baseUrl"){
+                contentType = MediaType.APPLICATION_JSON
+                content = objectMapper.writeValueAsString(existingBank)
+            }
+            
+            //then
+            performPatch
+                .andDo { print() }
+                .andExpect {
+                    status { isNotFound() }
+                }
+
+        }
+
     }
 
 
-}
