@@ -4,6 +4,7 @@ import com.rs.examples.thenewboston.model.Bank
 import com.rs.examples.thenewboston.service.BankService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -38,4 +39,9 @@ class BankController(private val bankService: BankService) {
 
     @PatchMapping
     fun patchBank(@RequestBody bank: Bank): Bank = bankService.updateBank(bank)
+
+    @DeleteMapping("{accountNumber}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun deleteBank(@PathVariable accountNumber: String) = bankService.deleteBank(accountNumber)
+
 }
